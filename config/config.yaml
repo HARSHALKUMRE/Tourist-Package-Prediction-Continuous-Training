@@ -1,0 +1,12 @@
+training_pipeline_config:
+  pipeline_name: tourism
+  artifact_dir: artifacts
+
+data_ingestion_config:
+  bucket_name: tourist-data
+  object_name: Travel_Data.csv
+  local_file_name: travel_data.csv
+  raw_data_dir: raw_data
+  ingested_dir: ingested_data
+  ingested_train_dir: train 
+  ingested_test_dir: test
