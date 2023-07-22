@@ -1,14 +1,12 @@
 import os, sys
 import json
 from typing import Tuple, Union
-
 import pandas as pd
 from evidently.model_profile import Profile
 from evidently.model_profile.sections import DataDriftProfileSection
 from evidently.dashboard import Dashboard
 from evidently.dashboard.tabs import DataDriftTab
 from pandas import DataFrame
-
 from tourism.exception import CustomException
 from tourism.logger import logging
 from tourism.utils.main_utils import read_yaml_file, write_yaml_file
@@ -20,7 +18,6 @@ from tourism.constant.training_pipeline import *
 
 class DataValidation:
     
-
     def __init__(self, data_validation_config:DataValidationConfig,
         data_ingestion_artifact:DataIngestionArtifact):
         try:

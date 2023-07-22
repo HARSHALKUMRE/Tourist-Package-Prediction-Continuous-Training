@@ -3,14 +3,19 @@ import pandas as pd
 import numpy as np
 from tourism.constant.training_pipeline import *
 from tourism.logger import logging
-from tourism.entity.config_entity import DataIngestionConfig, DataValidationConfig
-from tourism.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact
+from tourism.entity.config_entity import (DataIngestionConfig, 
+                                          DataValidationConfig, 
+                                          DataTransformationConfig)
+from tourism.entity.artifact_entity import (DataIngestionArtifact, 
+                                            DataValidationArtifact,
+                                            DataTransformationArtifact)
 from tourism.exception import CustomException
 from datetime import date
 from collections import namedtuple
 from tourism.configuration.configuration_file import Configuration
 from tourism.components.data_ingestion import DataIngestion
 from tourism.components.data_validation import DataValidation
+from tourism.components.data_transformation import DataTransformation
 
 class TrainingPipeline():
     def __init__(self, config: Configuration = Configuration())->None:
@@ -35,6 +40,20 @@ class TrainingPipeline():
             return data_validation.initiate_data_validation()
         except Exception as e:
             raise CustomException(e, sys)
+
+    def start_data_transformation(self,
+                                  data_ingestion_artifact: DataIngestionArtifact,
+                                  data_validation_artifact: DataValidationArtifact
+                                  ) -> DataTransformationArtifact:
+        try:
+            data_transformation = DataTransformation(
+                data_transformation_config=self.config.get_data_transformation_config(),
+                data_ingestion_artifact=data_ingestion_artifact,
+                data_validation_artifact=data_validation_artifact
+            )
+            return data_transformation.initiate_data_transformation()
+        except Exception as e:
+            raise CustomException(e, sys)
         
     
         
@@ -43,5 +62,9 @@ class TrainingPipeline():
             # Data Ingestion
             data_ingestion_artifact = self.start_data_ingestion()
             data_validation_artifact = self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
+            data_transformation_artifact = self.start_data_transformation(
+                data_ingestion_artifact=data_ingestion_artifact,
+                data_validation_artifact=data_validation_artifact
+            )
         except Exception as e:
             raise CustomException(e,sys) from e  
