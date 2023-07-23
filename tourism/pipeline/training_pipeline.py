@@ -5,10 +5,12 @@ from tourism.constant.training_pipeline import *
 from tourism.logger import logging
 from tourism.entity.config_entity import (DataIngestionConfig, 
                                           DataValidationConfig, 
-                                          DataTransformationConfig)
+                                          DataTransformationConfig,
+                                          ModelTrainerConfig)
 from tourism.entity.artifact_entity import (DataIngestionArtifact, 
                                             DataValidationArtifact,
-                                            DataTransformationArtifact)
+                                            DataTransformationArtifact,
+                                            ModelTrainerArtifact)
 from tourism.exception import CustomException
 from datetime import date
 from collections import namedtuple
@@ -16,6 +18,7 @@ from tourism.configuration.configuration_file import Configuration
 from tourism.components.data_ingestion import DataIngestion
 from tourism.components.data_validation import DataValidation
 from tourism.components.data_transformation import DataTransformation
+from tourism.components.model_trainer import ModelTrainer
 
 class TrainingPipeline():
     def __init__(self, config: Configuration = Configuration())->None:
@@ -54,6 +57,15 @@ class TrainingPipeline():
             return data_transformation.initiate_data_transformation()
         except Exception as e:
             raise CustomException(e, sys)
+
+    def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifact) -> ModelTrainerArtifact:
+        try:
+            model_trainer = ModelTrainer(model_trainer_config=self.config.get_model_trainer_config(),
+                                         data_transformation_artifact=data_transformation_artifact
+                                         )
+            return model_trainer.initiate_model_trainer()
+        except Exception as e:
+            raise CustomException(e, sys) from e
         
     
         
@@ -66,5 +78,6 @@ class TrainingPipeline():
                 data_ingestion_artifact=data_ingestion_artifact,
                 data_validation_artifact=data_validation_artifact
             )
+            model_trainer_artifact = self.start_model_trainer(data_transformation_artifact=data_transformation_artifact)
         except Exception as e:
             raise CustomException(e,sys) from e  
