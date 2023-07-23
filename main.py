@@ -4,7 +4,7 @@ import numpy as np
 from tourism.constant.training_pipeline import *
 from tourism.logger import logging
 from tourism.exception import CustomException
-from tourism.pipeline.training_pipeline import TrainingPipeline
+from tourism.pipeline.training_pipeline import Pipeline
 
 def main():
     try:
